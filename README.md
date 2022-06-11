@@ -21,7 +21,7 @@ cd manage_homelab
 Install the required python modules
 
 ```bash
-pip install requirements.txt
+pip install -r requirements.txt
 ```
 
 ## Usage
