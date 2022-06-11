@@ -56,4 +56,4 @@ options:
 ```
 
 ## Demo
-<p align="center"><img src="/images/render.gif?raw=true"/></p>
+<p align="center"><img src="/images/render_compressed.gif?raw=true"/></p>
