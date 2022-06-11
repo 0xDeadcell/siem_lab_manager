@@ -55,3 +55,5 @@ options:
                         List all running VMs
 ```
 
+## Demo
+<p align="center"><img src="/images/render.gif?raw=true"/></p>
