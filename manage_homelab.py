@@ -54,7 +54,7 @@ def stop_vms(vmx_paths, target_running):
         vm = PyVmrun(current_vmx_path)
         print(f"[+] Stopping VM at {current_vmx_path}")
         # Stop the VM
-        vm.stop()
+        vm.stop(mode='hard')
         
 
 def suspend_vms(vmx_paths, target_running):
