@@ -17,7 +17,6 @@ except FileNotFoundError:
     from pyvmrun import PyVmrun
 
 
-
 def download_homelab(path, dest_path):
     gauth = GoogleAuth()
     gdrive = GoogleDrive(gauth)
