@@ -4,7 +4,6 @@ import argparse
 import pathlib
 #from pydrive.auth import GoogleAuth
 #from pydrive.drive import GoogleDrive
-
 # patch PyVmrun so it finds the vmrun path in the registry
 try:
     from pyvmrun import PyVmrun
