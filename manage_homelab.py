@@ -20,6 +20,39 @@ except FileNotFoundError:
     from pyvmrun import PyVmrun
 
 
+def compress_vm_files(path, target_running, recursive=False):
+    import subprocess
+    valid_vmx_paths = [path for path in list_running_vms()]
+    if not target_running:
+        # Gets a list of all valid VMX files starting from the top of the path
+        valid_vmx_paths = get_valid_vmxs(path=path, recursive=recursive)
+
+    # Stops all valid VMXs files in the list
+    for current_path in valid_vmx_paths:
+        print(f"\n[*] Checking if VM at {current_path} is currently running...")
+        if pathlib.Path(current_path).stem in str(list_running_vms()):
+            print(f"[!] {pathlib.Path(current_path).stem} is currently running, attempting to stop now...")
+            stop_vms(vmx_paths=path, target_running=target_running, recursive=recursive)
+        print(f"[+] Attempting to compress {pathlib.Path(current_path).stem} to 7z with LZMA2 max compression.")
+        
+        # Compression of files
+        os.system(f"cd {os.path.split(current_path)[0]}")
+
+
+        valid_vm_extensions = ['.vmx', '.vmdk', '.vmxf', '.nvram', '.vmsd']
+
+        valid_vm_files = [os.path.join(os.path.split(current_path)[0], f) for f in os.listdir(os.path.split(current_path)[0]) if os.path.splitext(f)[-1] in valid_vm_extensions]
+        #for i in valid_vm_files:
+            #print(f"Attempting to compress '{pathlib.Path(i).name}' into '{pathlib.Path(current_path).stem}.7z'")
+        #print("")
+        joined_files = '"' + '" "'.join(valid_vm_files) + '"'
+        command = [r'C:\\"Program Files\\7-Zip\\7z.exe"', 'a', '-t7z', '-m0=lzma2', '-mx=9', '-aoa', '-y', '"' + os.path.join(os.path.split(current_path)[0], str(pathlib.Path(current_path).stem)) + '.7z' + '"', joined_files]
+        print("CMD: " + ' '.join(command))
+        
+        os.system(' '.join(command))
+        print(f"Created 7z archive at {os.path.join(os.path.split(current_path)[0], str(pathlib.Path(current_path).stem)) + '.7z'}")
+
+
 def download_homelab(path, dest_path):
     gauth = GoogleAuth()
     gdrive = GoogleDrive(gauth)
@@ -85,7 +118,7 @@ def stop_vms(vmx_paths, target_running, recursive=False):
         
         print(f"[+] Attempting to stop VM at {current_vmx_path}")
         # Stop the VM
-        vm.stop(mode='hard')
+        vm.stop(mode='soft')
         
 
 def suspend_vms(vmx_paths, target_running, recursive=False):
@@ -218,6 +251,7 @@ if __name__ == "__main__":
     group.add_argument("--list_snapshots", help="Output a list of snapshots for all targeted VMs", action="store_true")
     group.add_argument("-l", "--list_running_vms", help="List all running VMs", action="store_true")
     group.add_argument("--convert_to_ova", help="Attempt to stop a VM, and convert it to OVA format", action="store_true")
+    group.add_argument('-c', '--compress', help="Compress the VM files with LZMA2 compression", action="store_true")
     args = parser.parse_args()
 
     if args.target_running:
@@ -246,6 +280,9 @@ if __name__ == "__main__":
         print(f"[+] Currently {len(running_vms)} VMs are running")
         for i in running_vms:
             print(i)
+
+    if args.compress:
+        compress_vm_files(path=args.vm_directory_path, target_running=args.target_running, recursive=args.recursive)
 
     if args.convert_to_ova:
         convert_vmx_to_ova(path=args.vm_directory_path, target_running=args.target_running, recursive=args.recursive)

@@ -6,7 +6,7 @@ Automate tedious VMware functions for your homelab with ease
 ## TODO List
 
 - [x] Add conversion to OVA format
-- [ ] Add the option to compress VM files with LZMA2
+- [x] Add the option to compress VM files with LZMA2
 - [ ] Add an upload/download feature to/from Google Drive
 - [ ] Add an option to output the IP address and the VMnet Interface
 - [ ] Generate a Network Map based off the IP addresses, VMnet Interfaces and OS of Guests
