@@ -43,13 +43,13 @@ def convert_vmx_to_ova(path, target_running, recursive=False):
 
     # Stops all valid VMXs files in the list
     for current_path in valid_vmx_paths:
-        print(f"[*] Checking if VM at {current_path} is currently running...")
-        if current_path.stem in str(valid_vmx_paths):
-            print(f"[!] {current_path.stem} is currently running, attempting to stop now...")
+        print(f"\n[*] Checking if VM at {current_path} is currently running...")
+        if pathlib.Path(current_path).stem in str(valid_vmx_paths):
+            print(f"[!] {pathlib.Path(current_path).stem} is currently running, attempting to stop now...")
             stop_vms(vmx_paths=path, target_running=target_running, recursive=recursive)
-        print(f"[+] Attempting to convert {current_path.name} to OVA format.")
+        print(f"[+] Attempting to convert {pathlib.Path(current_path).name} to OVA format.")
         print(f'[*] Running: {value} "{current_path}" "{os.path.splitext(current_path)[0]}.ova"')
-        os.system(fr'{value} "{current_path}" "{os.path.splitext(current_path)[0]}.ova"')
+        os.system(fr'{value} --overwrite --compress=9 --noImageFiles --skipManifestCheck --targetType=OVA "{current_path}" "{os.path.splitext(current_path)[0]}.ova"')
 
 
 def get_valid_vmxs(path, recursive=False):
