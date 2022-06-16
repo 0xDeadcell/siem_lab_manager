@@ -99,7 +99,7 @@ def download_homelab(lab_file, dest_path, extract=False):
     else:
         os.chdir('/tmp')
         gd_downloader = os.path.join(os.getcwd(), 'goodls_linux_amd64')
-        if not 'goodls_windows_amd64.exe' in os.listdir():
+        if not 'goodls_linux_amd64' in os.listdir():
             # Only download the Google Drive downloader if it doesn't already exist
             command = ['wget', 'https://github.com/tanaikech/goodls/releases/download/v2.0.1/goodls_linux_amd64']
             os.system('chmod 775 goodls_linux_amd64')
