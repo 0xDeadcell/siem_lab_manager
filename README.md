@@ -12,6 +12,13 @@ Automate tedious VMware functions for your homelab with ease
 - [ ] Add an option to output the IP address and the VMnet Interface
 - [ ] Generate a Network Map based off the IP addresses, VMnet Interfaces and OS of Guests
 
+## Known Issues
+Certain Linux VMs won't power off with the stop command:
+
+Solutions:
+- Stop the VM manually
+OR
+- Change the line where it says: vm.stop(mode='soft') to vm.stop(mode='hard') 
 
 ## Installation Steps
 
