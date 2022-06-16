@@ -2,8 +2,9 @@ import os
 import sys
 import argparse
 import pathlib
-#from pydrive.auth import GoogleAuth
-#from pydrive.drive import GoogleDrive
+import subprocess
+
+
 # patch PyVmrun so it finds the vmrun path in the registry
 try:
     from pyvmrun import PyVmrun
@@ -33,7 +34,6 @@ def get_zip_path():
 
 
 def compress_vm_files(path, target_running, recursive=False):
-    import subprocess
     valid_vmx_paths = [path for path in list_running_vms()]
     if not target_running:
         # Gets a list of all valid VMX files starting from the top of the path
@@ -67,17 +67,23 @@ def compress_vm_files(path, target_running, recursive=False):
 
 def extract_vm(zip_file, dest_path, prompt):
     zip_path = get_zip_path()
-    print(f"[+] Extracting {zip_file} into {dest_path} now...")
-
+    
     if not prompt:
         overwrite = '-aou'
         prompt = '-y'
     else:
         overwrite = ''
         prompt = ''
-
+    try:
+        os.chdir(dest_path)
+        os.mkdir(pathlib.Path(zip_file).stem)
+        os.chdir(os.path.join(dest_path, pathlib.Path(zip_file).stem))
+    except Exception as e:
+        print(e)
+    print(f"[+] Extracting {zip_file} into {os.getcwd()} now...")
     # Force extract to destination, autorename the output file if the zip output already exists
-    command = [zip_path, 'x', zip_file, '-o' + os.path.join(dest_path, pathlib.Path(zip_file).stem) , overwrite, prompt]
+    command = [zip_path, 'x', zip_file, '-o' + '"' + os.path.join(os.getcwd(), pathlib.Path(zip_file).stem) + '"', overwrite, prompt]
+    print(' '.join(command))
     os.system(' '.join(command))
 
 
@@ -99,13 +105,17 @@ def download_homelab(lab_file, dest_path, extract=False):
     else:
         os.chdir('/tmp')
         gd_downloader = os.path.join(os.getcwd(), 'goodls_linux_amd64')
+        # sys.exit('[!] Please chmod +x /tmp/goodls_linux_amd64 before running again')
         if not 'goodls_linux_amd64' in os.listdir():
+            #if subprocess.check_output(['chmod', '-u']).decode('utf-8').strip() != '0':
+                #sys.exit("[!] Please re-run your command with sudo")
+
             # Only download the Google Drive downloader if it doesn't already exist
             command = ['wget', 'https://github.com/tanaikech/goodls/releases/download/v2.0.1/goodls_linux_amd64']
-            os.system('chmod 775 goodls_linux_amd64')
             # Execute the command to retrieve the google drive downloader
             print(f"Retrieving google drive downloader tool, and placing it in temp.")
             os.system(' '.join(command))
+            subprocess.call(['chmod', '+x', '/tmp/goodls_linux_amd64'])
     print(f"Downloading VMs into {dest_path} with links from {abs_path_lab_file}")
     
     os.chdir(dest_path)
