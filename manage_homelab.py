@@ -69,7 +69,7 @@ def extract_vm(zip_file, dest_path, prompt):
     zip_path = get_zip_path()
     
     if not prompt:
-        overwrite = '-aou'
+        overwrite = '-aos'
         prompt = '-y'
     else:
         overwrite = ''
