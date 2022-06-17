@@ -1,9 +1,12 @@
 
 # MANAGE_HOMELAB.py
 
-Automate tedious VMware functions for your homelab with ease
+Automate tedious VMware functions for your homelab with ease on either Windows or Linux hosts, or simply install a Pre-built lab.
 
-For an already complete lab please check out the [Lab Contents](/lab_contents.md) for an extensive look at the VMs, pre-configured applications and a list of running services.
+
+##[Pre-built Cybersecurity VULNLAB](/lab_contents.md)
+For an already built lab please check out my [Cybersecurity VULNLAB](/lab_contents.md) for an extensive look at the VMs, pre-configured applications and a list of running services.
+Install instructions for this **optional** lab are below.
 
 ## TODO List
 
@@ -42,12 +45,14 @@ Install the required python modules
 python3 -m pip install -r requirements.txt
 ```
 
-## Download and start a homelab from Google Drive
+## **Optional** Download and start a homelab from Google Drive
 
-(If you don't have the time to setup a lab, then check out my [Cybersecurity VULNLAB](/lab_contents.md))
+If you don't have the time to setup a lab, then check out my [Cybersecurity VULNLAB](/lab_contents.md) or continue below for how to install it.
 
+
+### Install a Cybersecurity VULNLAB
 ```bash
-python3 manage_homelab.py --download_homelab prebuilt_labs\example_vm_link.txt -d ..\path\to\vm\directory -x
+python3 manage_homelab.py --download_homelab prebuilt_labs\recommended_lab_links.txt -d ..\path\to\vm\directory -x
 python3 manage_homelab.py --create_snapshot baseline_snapshot -d ..\path\to\vm\directory
 python3 manage_homelab.py --start_vms -d ..\path\to\vms\directory
 ```
