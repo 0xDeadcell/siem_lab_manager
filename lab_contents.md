@@ -1,8 +1,11 @@
 # Lab Contents
 
-## Overview of VMs, running services, and some of the installed applications
+## Network Map
 
-Add Network Map here
+<p align="center"><img src="/images/homelab_apps.png?raw=true"/></p>
+
+
+## Overview of VMs, running services, and some of the installed applications
 
 ### Lab Dashboard (vm_dashboard)
 - Homer
@@ -12,7 +15,7 @@ Add Network Map here
 - Portainer
 - WikiJS
 
-Add Screenshot here
+<p align="center"><img src="/images/dashboard.png?raw=true"/></p>
 
 ### Network Kit (vm_network_kit)
 - Elasticsearch
@@ -27,6 +30,8 @@ Add Screenshot here
 Add Screenshot here
  
 ### Domain Controller (vm_dc2019)
+- DNS Configured
+- GPO Policies setup
 - Sysmon deployed
 - Winlogbeats deployed
 - Ghosts (NPC/Traffic generation tool): ready to deploy
@@ -60,13 +65,13 @@ Add Screenshot here
 - Atomic Red Team Tools added
 - OWASP JuiceShop running
 
-Add Screenshot here
+<p align="center"><img src="/images/juiceshop.png?raw=true"/></p>
 
 
 ### OWASP Broken Web Application Security Project (VM_BWAP)
 - List of running applications/sites can be found on the (Google OWASP Wiki)[https://code.google.com/archive/p/owaspbwa/wikis/UserGuide.wiki]
 
-Add Screenshot here
+<p align="center"><img src="/images/owasp_bwa.png?raw=true"/></p>
 
 
 ## Video Walkthrough of the lab
