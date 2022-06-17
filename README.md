@@ -3,6 +3,8 @@
 
 Automate tedious VMware functions for your homelab with ease
 
+Please check out the [Lab Contents](/lab_contents) for an extensive look at the VMs, pre-configured applications and a list of running services.
+
 ## TODO List
 
 - [x] Add conversion to OVA format
@@ -41,6 +43,8 @@ python3 -m pip install -r requirements.txt
 ```
 
 ## Download and start a homelab from Google Drive
+
+(If you don't have the time to setup a lab, then check out my [Cybersecurity VULNLAB](/lab_contents))
 
 ```bash
 python3 manage_homelab.py --download_homelab example_vm_link.txt -d ..\path\to\vm\directory -x
