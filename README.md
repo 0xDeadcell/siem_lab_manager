@@ -47,7 +47,7 @@ python3 -m pip install -r requirements.txt
 (If you don't have the time to setup a lab, then check out my [Cybersecurity VULNLAB](/lab_contents.md))
 
 ```bash
-python3 manage_homelab.py --download_homelab homelab_links\example_vm_link.txt -d ..\path\to\vm\directory -x
+python3 manage_homelab.py --download_homelab prebuilt_labs\example_vm_link.txt -d ..\path\to\vm\directory -x
 python3 manage_homelab.py --create_snapshot baseline_snapshot -d ..\path\to\vm\directory
 python3 manage_homelab.py --start_vms -d ..\path\to\vms\directory
 ```
