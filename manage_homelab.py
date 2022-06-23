@@ -1,7 +1,9 @@
 import os
 import sys
-import argparse
+import base64
 import pathlib
+import argparse
+import threading
 import subprocess
 
 
@@ -87,10 +89,49 @@ def extract_vm(zip_file, dest_path, prompt):
     os.system(' '.join(command))
 
 
-def download_homelab(lab_file, dest_path, extract=False):
+def download_homelab_onedrive(lab_file, dest_path):
+    abs_path_lab_file = os.path.join(os.getcwd(), lab_file)
+    print(f"Downloading VMs into {dest_path} with links from {abs_path_lab_file}")
+    os.chdir(dest_path)
+
+    # Put links to OneDrive VMs in a list
+    with open(abs_path_lab_file, 'r') as f:
+        onedrive_file = f.read().replace('\t', '').split('\n')
+
+    # https://docs.microsoft.com/en-us/onedrive/developer/rest-api/api/shares_get?view=odsp-graph-online#encoding-sharing-urls
+    # Normalize the list to remove blank lines, comments and redirect a base64 version of the shortlink to the OneDrive API
+    onedrive_links = ["https://api.onedrive.com/v1.0/shares/u!".encode("UTF-8") + base64.urlsafe_b64encode(link.encode("UTF-8")) + "/root/content".encode("UTF-8") for link in onedrive_file if link != "" and not link.startswith("#")]
+    
+    # Download the VMs
+    if sys.platform == "win32":
+        # Windows
+        curl_command = r'C:\Windows\System32\curl.exe'
+    else:
+        # Unix
+        curl_command = 'curl'
+
+    #thread_amount = len(onedrive_links)
+    
+    # I know I know I know it's ugly...
+    #def _download_homelab_thread(command, thread_amount=thread_amount):
+        #semaphore = threading.Semaphore(thread_amount)
+        #with semaphore:
+            #os.system('start "ONEDRIVE VM DOWNLOAD" /MIN cmd /c' + command)
+
+    for num, link in enumerate(onedrive_links):
+        download_lab_command = [curl_command, '-L', f'"{link.decode()}"', "-o", f"VM_{num}.7z"] # Use quotes around link in case there are any special characters
+        print(f"\nCMD: {' '.join(download_lab_command)}")
+        command = ' '.join(download_lab_command)
+        #if sys.platform == "win32":
+        #    threading.Thread(target=_download_homelab_thread, args=(f"{command}", )).start()
+        #else:
+        #    os.system(command)
+        # Not ready for Threading just yet...
+        os.system(command)
+
+def download_homelab(lab_file, dest_path):
     abs_path_lab_file = os.path.join(os.getcwd(), lab_file)
     # Download the VMs
-    # https://drive.google.com/file/d/1OgjI4Bw9K4py4eLz2IKz0RzOPzX-RvRH/view?usp=sharing
     if sys.platform == "win32":
         # Windows
         # So we can download the file in the temp directory
@@ -119,14 +160,22 @@ def download_homelab(lab_file, dest_path, extract=False):
     print(f"Downloading VMs into {dest_path} with links from {abs_path_lab_file}")
     
     os.chdir(dest_path)
-    download_lab_command = [gd_downloader, ' < ', abs_path_lab_file]
-    os.system(' '.join(download_lab_command))
-    if extract:
-        print(f"[*] Extract flag set, attempting to unzip all 7z files in {dest_path}")
-        zip_files = [i for i in os.listdir() if i.endswith('7z')]
-        print(zip_files)
-        for zip_file in zip_files:
-            extract_vm(zip_file=zip_file, dest_path=dest_path, prompt=False)
+    
+    # I know I know I know it's ugly...
+    #thread_amount = 3
+    #def _download_homelab_thread(command, thread_amount=thread_amount):
+        #semaphore = threading.Semaphore(thread_amount)
+        #with semaphore:
+            #os.system('start "GOOGLE DRIVE VM DOWNLOAD" /MIN cmd /c' + command)
+    
+    download_lab_command = ' '.join([gd_downloader, ' < ', abs_path_lab_file])
+
+    #if sys.platform == "win32":
+    #    threading.Thread(target=_download_homelab_thread, args=(f"{download_lab_command}", )).start()
+    #else:
+    #    os.system(download_lab_command)
+    # Not ready for threading just yet...
+    os.system(download_lab_command)
 
 
 def convert_vmx_to_ova(path, target_running, recursive=False):
@@ -319,15 +368,15 @@ if __name__ == "__main__":
     group.add_argument("--start_vms", help="Start the targeted VMs", action="store_true")
     group.add_argument("--stop_vms", help="Stop the targeted VMs", action="store_true")
     group.add_argument("--suspend_vms", help="Suspend the targeted VMs", action="store_true")
-    group.add_argument("--create_snapshot", help="Create a snapshot for all targeted VMs, requires a snapshot name", type=str)
-    group.add_argument("--restore_snapshot", help="Attempt to restore a snapshot for all targeted VMs, requires a snapshot name", type=str)
-    group.add_argument("--delete_snapshot", help="Attempt to delete a snapshot for all targeted VMs, requires a snapshot name", type=str)
+    group.add_argument("--create_snapshot", metavar="SNAPSHOT_NAME", help="Create a snapshot for all targeted VMs, requires a snapshot name", type=str)
+    group.add_argument("--restore_snapshot",metavar="SNAPSHOT_NAME",  help="Attempt to restore a snapshot for all targeted VMs, requires a snapshot name", type=str)
+    group.add_argument("--delete_snapshot", metavar="SNAPSHOT_NAME", help="Attempt to delete a snapshot for all targeted VMs, requires a snapshot name", type=str)
     group.add_argument("--list_snapshots", help="Output a list of snapshots for all targeted VMs", action="store_true")
     group.add_argument("-l", "--list_running_vms", help="List all running VMs", action="store_true")
     group.add_argument("--convert_to_ova", help="Attempt to stop a VM, and convert it to OVA format", action="store_true")
     group.add_argument('-c', '--compress', help="Compress the VM files with LZMA2 compression", action="store_true")
-    group.add_argument("--download_homelab", help="Download one or more VMs from a shared Google Drive by specifying a file containing one or multiple shared links. Used with -d", action="store", type=pathlib.Path)
-    
+    group.add_argument("--download_homelab", metavar="FILENAME.TXT", help="Download one or more VMs from a shared Google Drive by specifying a file containing one or multiple shared links. Used with -d", action="store", type=pathlib.Path)
+    group.add_argument("--download_homelab_onedrive", metavar="FILENAME.TXT", help="Download one or more VMs from a shared OneDrive by specifying a file containing one or multiple shared links. Used with -d", action="store", type=pathlib.Path)
     args = parser.parse_args()
 
     args.vm_directory_path = os.path.abspath(os.path.join(os.getcwd(), args.vm_directory_path))
@@ -386,9 +435,9 @@ if __name__ == "__main__":
 
     if args.download_homelab:
         if args.extract:
-            print("[+] Extract flag is set, will automatically attempt to extract downloaded VMs")
+            print("[*] Extract flag is set, will automatically attempt to extract downloaded VMs")
         else:
-            print("[-] Extract flag is not set, please run with -x if you'd like VMs extracted after download completion")
+            print("[!] Extract flag is not set, please run with -x if you'd like VMs extracted after download completion")
         path = pathlib.Path(args.download_homelab)
         dest_path = pathlib.Path(args.vm_directory_path)
         if not path.is_file():
@@ -397,12 +446,32 @@ if __name__ == "__main__":
             sys.exit("[!] Please specify a valid directory path to store the VM(s) in with -d")
         elif path.is_file():
             print(f"[+] Downloading VMs to {args.vm_directory_path} now...")
-            download_homelab(lab_file=args.download_homelab, dest_path=args.vm_directory_path, extract=args.extract)
+            download_homelab(lab_file=args.download_homelab, dest_path=args.vm_directory_path)
+
+
+    if args.download_homelab_onedrive:
+        if args.extract:
+            print("[*] Extract flag is set, will automatically attempt to extract downloaded VMs")
+        else:
+            print("[!] Extract flag is not set, please run with -x if you'd like VMs extracted after download completion")
+        path = pathlib.Path(args.download_homelab_onedrive)
+        dest_path = pathlib.Path(args.vm_directory_path)
+        if not path.is_file():
+            sys.exit("[!] Please specify a valid file containing Google Drive links")
+        elif not dest_path.is_dir():
+            sys.exit("[!] Please specify a valid directory path to store the VM(s) in with -d")
+        elif path.is_file():
+            print(f"[+] Downloading VMs to {args.vm_directory_path} now...")
+            download_homelab_onedrive(lab_file=args.download_homelab_onedrive, dest_path=args.vm_directory_path)
+
 
     if args.extract:
         print(f"[*] Checking {args.vm_directory_path} for *.7z files to extract")
         zip_files = [ '"' + os.path.join(args.vm_directory_path, i) + '"' for i in os.listdir(args.vm_directory_path) if i.endswith('7z')]
-        print("[+] Found files to extract, will prompt if overwriting is needed: ")
+        if zip_files:
+            print("[+] Found files to extract, will prompt if overwriting is needed: ")
+        else:
+            sys.exit("[-] Could not find any files to extract")
         for i in zip_files:
             print(i)
         for zip_file in zip_files:
