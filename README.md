@@ -28,7 +28,8 @@ Install instructions for this **optional** lab are below.
     - Option 2: Change the line where it says: vm.stop(mode='soft') to vm.stop(mode='hard') 
 
 
-2. Some VMs aren't being downloaded, or an error saying "invalid link" is appearing 
+2. Some VMs aren't being downloaded, or an error saying 'invalid url' is appearing 
+
     Details: When downloading a VM through Google Drive (by specifying `--download_homelab prebuilt_labs\recommended_lab_links.txt`), rate limiting may occur if a file has been downloaded more than a certain amount within 24 hours.
 
     Solutions:
