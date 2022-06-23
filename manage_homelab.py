@@ -78,8 +78,6 @@ def extract_vm(zip_file, dest_path, prompt):
         prompt = ''
     try:
         os.chdir(dest_path)
-        os.mkdir(pathlib.Path(zip_file).stem)
-        os.chdir(os.path.join(dest_path, pathlib.Path(zip_file).stem))
     except Exception as e:
         print(e)
     print(f"[+] Extracting {zip_file} into {os.getcwd()} now...")
