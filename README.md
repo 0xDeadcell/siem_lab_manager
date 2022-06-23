@@ -16,22 +16,25 @@ Install instructions for this **optional** lab are below.
 - [x] Add the option to compress VM files with LZMA2
 - [x] Add a feature to download VMs from Google Drive
 - [x] Add a feature to extract zipped (*.7z) VMs
+- [ ] Add multi-threading for VM download operations
 - [ ] Add an option to output the IP address and the VMnet Interface
 - [ ] Generate a Network Map based off the IP addresses, VMnet Interfaces and OS of Guests
 
 ## Known Issues
 1. Certain Linux VMs won't power off with the stop command:
 
-Solutions:
-- Option 1: Stop the VM manually
-- Option 2: Change the line where it says: vm.stop(mode='soft') to vm.stop(mode='hard') 
+    Solutions:
+    - Option 1: Stop the VM manually
+    - Option 2: Change the line where it says: vm.stop(mode='soft') to vm.stop(mode='hard') 
 
-2. When downloading a VM through Google Drive (by specifying `--download_homelab prebuilt_labs\recommended_lab_links.txt`), rate limiting may occur if a file has been downloaded more than a certain amount within 24 hours.
 
-Solutions:
-- Option 1: Run your command with `--download_homelab_onedrive prebuilt_labs\onedrive_recommended_lab_links.txt` option, this will attempt to download the lab via OneDrive instead of Google Drive which has less severe rate limiting
-- Option 2: Wait a few hours and try again (you can remove links from recommended_lab_links.txt that have already been downloaded)
-- Option 3: Please reach out to me, and I'll share a direct link to the VM(s) with you
+2. Some VMs aren't being downloaded, or an error saying "invalid link" is appearing 
+    Details: When downloading a VM through Google Drive (by specifying `--download_homelab prebuilt_labs\recommended_lab_links.txt`), rate limiting may occur if a file has been downloaded more than a certain amount within 24 hours.
+
+    Solutions:
+    - Option 1: Run your command with `--download_homelab_onedrive prebuilt_labs\onedrive_recommended_lab_links.txt` option, this will attempt to download the lab via OneDrive instead of Google Drive which has less severe rate limiting
+    - Option 2: Wait a few hours and try again (you can remove links from recommended_lab_links.txt that have already been downloaded)
+    - Option 3: Please reach out to me, and I'll share a direct link to the VM(s) with you
 
 
 ## Installation Steps
