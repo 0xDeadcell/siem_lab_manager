@@ -38,6 +38,19 @@ Install instructions for this **optional** lab are below.
     - Option 3: Please reach out to me, and I'll share a direct link to the VM(s) with you
 
 
+## Pre-requisites
+
+### Windows
+- Install [Python3](https://www.python.org/downloads/)
+- Install [7zip](https://www.7-zip.org/download.html)
+
+### Linux
+Install dependencies
+
+```bash
+sudo apt install p7zip curl -y
+```
+
 ## Installation Steps
 
 Clone the project
