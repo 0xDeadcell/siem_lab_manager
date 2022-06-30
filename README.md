@@ -48,7 +48,7 @@ Install instructions for this **optional** lab are below.
 Install dependencies
 
 ```bash
-sudo apt install p7zip curl -y
+sudo apt install p7zip-full curl -y
 ```
 
 ## Installation Steps
